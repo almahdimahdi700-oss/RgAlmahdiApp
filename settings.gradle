@@ -12,4 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "RgAlmahdiApp"
+include ':app'
