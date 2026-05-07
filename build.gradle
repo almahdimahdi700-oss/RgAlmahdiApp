@@ -1,7 +1,11 @@
+plugins {
+    id 'com.android.application' version '8.2.2'
+}
+
 android {
     namespace 'com.rg.almahdi'
     compileSdk 34
-    
+
     defaultConfig {
         applicationId "com.rg.almahdi"
         minSdk 21
@@ -16,9 +20,13 @@ android {
         }
     }
     
-    // ضيف هذا البلوك كامل
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
