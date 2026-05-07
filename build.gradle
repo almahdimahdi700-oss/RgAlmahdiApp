@@ -1,3 +1,40 @@
 plugins {
     id 'com.android.application' version '8.2.0' apply false
 }
+
+android {
+    namespace 'com.rg.almahdi'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.rg.almahdi"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        debug {
+            debuggable true
+        }
+    }
+    
+    // هذا السطر يقول لـ Gradle إن الملفات في الجذر مباشرة
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['.']
+            res.srcDirs = ['.']
+            assets.srcDirs = ['.']
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+}
