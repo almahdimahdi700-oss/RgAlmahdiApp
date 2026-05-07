@@ -13,31 +13,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     buildTypes {
         release {
             minifyEnabled false
-        }
-    }
-    
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java {
-                srcDirs = ['.']
-                exclude '**/build/**'
-                exclude '**/.gradle/**'
-                exclude '**/.git/**'
-            }
-            res {
-                srcDirs = ['.']
-                exclude '**/build/**'
-            }
         }
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
 }
