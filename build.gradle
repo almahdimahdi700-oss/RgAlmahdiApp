@@ -2,7 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' } // هذا اللي نسيناه
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2'
@@ -13,18 +13,18 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' } // وهذا كمان
+        maven { url 'https://jitpack.io' }
     }
 }
 
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'com.almahdi.rgalmahdiapp'
+    namespace 'com.rgalmahdi.app'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.almahdi.rgalmahdiapp"
+        applicationId "com.rgalmahdi.app"
         minSdk 21
         targetSdk 34
         versionCode 1
