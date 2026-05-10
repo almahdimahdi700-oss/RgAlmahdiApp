@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 // 4. صفحة الأوفلاين الفخمة - ميزة 4
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
-                        "<h1>رق المهدي ن1 〠➥❍</h1>" +
+                        "<h1>رق المهدي ن1 〠</h1>" +
                         "<h3>الموقع تحت الصيانة حالياً</h3>" +
                         "<p>اسحب للأسفل للتحديث</p>" +
                         "<p>أو تأكد من اتصالك بالانترنت</p>" +
