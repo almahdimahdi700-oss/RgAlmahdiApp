@@ -1,4 +1,4 @@
-package com.rgalmahdi.blogspot.app;
+package com.rgalmahdi.app;
 
 import android.os.Bundle;
 import android.webkit.WebView;
