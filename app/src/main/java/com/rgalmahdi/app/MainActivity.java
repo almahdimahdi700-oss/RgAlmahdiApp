@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
     private FloatingActionButton fabShare;
-    private String currentUrl = "https://google.com";
+    private String currentUrl = "https://rgalmahdi.blogspot.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 // 4. صفحة الأوفلاين الفخمة - ميزة 4
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
                         "<h1>رق المهدي ن1 〠</h1>" +
-                        "<h3>الموقع https://rgalmahdi.blogspot.comتحت الصيانة حالياً</h3>" +
+                        "<h3>الموقع https://rgalmahdi.blogspot.com تحت الصيانة حالياً</h3>" +
                         "<p>اسحب للأسفل للتحديث</p>" +
                         "<p>أو تأكد من اتصالك بالانترنت</p>" +
                         "</body></html>";
