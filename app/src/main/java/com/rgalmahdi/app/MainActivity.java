@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
-                        "<h1>رق المهدي ن1 〠➥❍</h1>" +
+                        "<h1>رق المهدي برو 〠</h1>" +
                         "<h3>تعذر تحميل المدونة</h3>" +
                         "<p>اسحب للأسفل للتحديث</p>" +
                         "<p>تأكد من اتصالك بالانترنت</p>" +
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         fabShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "تابع مدونة رق المهدي ن1: " + currentUrl);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "تابع مدونة رق المهدي برو https://rgalmahdi.blogspot.com: " + currentUrl);
             startActivity(Intent.createChooser(shareIntent, "شارك الرابط عبر"));
         });
     }
