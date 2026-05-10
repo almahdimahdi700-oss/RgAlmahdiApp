@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         webView = findViewById(R.id.webView);
 
-        // إعدادات الويب فيو
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -28,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
-        // عشان ما يفتح الروابط في المتصفح الخارجي
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -37,19 +35,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                // لو صار خطأ يعرض صفحة بسيطة
-                view.loadData("تعذر تحميل الموقع. تأكد من اتصالك بالانترنت وأن الدومين شغال", "text/html; charset=UTF-8", null);
+                // هذه الصفحة تطلع لو موقعك طافي
+                String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
+                        "<h1>رق المهدي ن1 ❍〠〄</h1>" +
+                        "<h3>الموقع تحت الصيانة حالياً</h3>" +
+                        "<p>اسحب للأسفل للتحديث</p>" +
+                        "<p>أو تأكد من اتصالك بالانترنت</p>" +
+                        "</body></html>";
+                view.loadDataWithBaseURL(null, errorHtml, "text/html", "UTF-8", null);
             }
         });
 
-        // الرابط الصح بدون / زيادة
         webView.loadUrl("https://rgalmahdi.com");
-
-        // السحب للتحديث
         swipeRefreshLayout.setOnRefreshListener(() -> webView.reload());
     }
 
-    // زر الرجوع
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
