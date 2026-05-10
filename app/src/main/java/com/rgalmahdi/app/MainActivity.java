@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
     private FloatingActionButton fabShare;
+    // الميزة 1: الرابط الصحيح لمدونتك
     private String currentUrl = "https://rgalmahdi.blogspot.com";
 
     @Override
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. منع تصوير الشاشة - ميزة 8
+        // الميزة 8: منع تصوير الشاشة - شيل // لو تبي تفعله
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
@@ -50,10 +51,13 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
-        // 2. الكاش السريع - ميزة 6
+        // الميزة 6: الكاش السريع + يعمل بدون نت
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        
+        // التعديل السحري لبلوجر: يخلي بلوجر يفكر أنك متصفح كروم
+        webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
-        // 3. شريط التحميل - ميزة 2
+        // الميزة 2: شريط التحميل الذهبي
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -70,23 +74,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 swipeRefreshLayout.setRefreshing(false);
-                currentUrl = url; // حفظ الرابط الحالي للمشاركة
+                currentUrl = url; // نحفظ الرابط للمشاركة
             }
 
+            // الميزة 4: صفحة الأوفلاين الفخمة
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                // 4. صفحة الأوفلاين الفخمة - ميزة 4
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
-                        "<h1>رق المهدي ن1 〠</h1>" +
-                        "<h3>الموقع https://rgalmahdi.blogspot.com تحت الصيانة حالياً</h3>" +
+                        "<h1>رق المهدي ن1 〠➥❍</h1>" +
+                        "<h3>تعذر تحميل المدونة</h3>" +
                         "<p>اسحب للأسفل للتحديث</p>" +
-                        "<p>أو تأكد من اتصالك بالانترنت</p>" +
+                        "<p>تأكد من اتصالك بالانترنت</p>" +
                         "</body></html>";
                 view.loadDataWithBaseURL(null, errorHtml, "text/html", "UTF-8", null);
             }
         });
 
-        // 5. تحميل الملفات - ميزة 6
+        // الميزة 5: تحميل الملفات من موقعك
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -106,17 +110,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 6. الرابط الصحيح تبعك
+        // نحمل مدونتك
         webView.loadUrl(currentUrl);
-
-        // 7. السحب للتحديث - ميزة موجودة
+        
+        // الميزة 3: السحب للتحديث
         swipeRefreshLayout.setOnRefreshListener(() -> webView.reload());
 
-        // 8. زر المشاركة العائم - ميزة 4
+        // الميزة 7: زر المشاركة العائم الذهبي
         fabShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "شوف مقال من موقع رق المهدي ن1: " + currentUrl);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "تابع مدونة رق المهدي ن1: " + currentUrl);
             startActivity(Intent.createChooser(shareIntent, "شارك الرابط عبر"));
         });
     }
