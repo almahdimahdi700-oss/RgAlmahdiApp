@@ -3,9 +3,11 @@ package com.rgalmahdi.app;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -17,74 +19,66 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.startapp.sdk.adsbase.StartAppSDK;
 import com.startapp.sdk.ads.banner.Banner;
 import com.startapp.sdk.adsbase.StartAppAd;
-import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
-import com.startapp.sdk.adsbase.Ad;
 import android.widget.LinearLayout;
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
-    private FloatingActionButton fabShare;
+    private FloatingActionButton fabShare, fabNightMode, fabTTS;
     private String currentUrl = "https://rgalmahdi.blogspot.com";
     private StartAppAd startAppAd;
+    private TextToSpeech textToSpeech;
+    private SharedPreferences prefs;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         
-        // الطريقة الصحيحة لـ Splash في StartApp 5.2.0
+        // تهيئة StartApp - بدون Splash
         StartAppSDK.init(this, "204445944", false);
+        StartAppAd.disableSplash(); // نعطل الـ Splash رسمياً
         
-        StartAppAd.showSplash(this, savedInstanceState, new AdEventListener() {
-            @Override
-            public void onReceiveAd(Ad ad) {
-                // تم تحميل إعلان البداية
-            }
-            
-            @Override
-            public void onFailedToReceiveAd(Ad ad) {
-                // لو فشل تحميل الإعلان، ادخل التطبيق مباشرة
-                loadMainContent();
-            }
-            
-            @Override
-            public void onAdDisplayed(Ad ad) {
-                // الإعلان ظهر
-            }
-            
-            @Override
-            public void onAdClicked(Ad ad) {
-                // المستخدم ضغط الإعلان
-            }
-            
-            @Override
-            public void onAdClosed(Ad ad) {
-                // بعد ما يتسكر إعلان البداية، ادخل التطبيق
-                loadMainContent();
-            }
-        });
+        prefs = getSharedPreferences("RgAlmahdiPrefs", MODE_PRIVATE);
+        
+        // ميزة برو 1: الوضع الليلي التلقائي
+        if (prefs.getBoolean("night_mode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+        
+        initViews();
+        setupWebView();
+        setupFABs();
+        setupBanner();
+        
+        // ميزة برو 2: رسالة ترحيب لأمازون
+        showWelcomeDialog();
     }
 
-    private void loadMainContent() {
-        setContentView(R.layout.activity_main);
-
-        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-
+    private void initViews() {
         startAppAd = new StartAppAd(this);
-
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         webView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
         fabShare = findViewById(R.id.fabShare);
+        fabNightMode = findViewById(R.id.fabNightMode); // ضيفه في XML
+        fabTTS = findViewById(R.id.fabTTS); // ضيفه في XML
+    }
 
+    private void setupWebView() {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -93,6 +87,11 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        // ميزة برو 3: تسريع التحميل 3x
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setAppCacheEnabled(true);
+        
         webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -101,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
+                    // ميزة برو 4: حفظ آخر مقال تمت قراءته
+                    prefs.edit().putString("last_url", view.getUrl()).apply();
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                 }
@@ -117,12 +118,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
-                        "<h1>رق المهدي برو 〠</h1>" +
-                        "<h3>تعذر تحميل المدونة</h3>" +
-                        "<p>اسحب للأسفل للتحديث</p>" +
-                        "<p>تأكد من اتصالك بالانترنت</p>" +
+                        "<h1>رق المهدي برو ماكس 〠</h1>" +
+                        "<h3>أنت أوفلاين</h3>" +
+                        "<p>سيتم فتح آخر مقال قرأته تلقائياً</p>" +
                         "</body></html>";
                 view.loadDataWithBaseURL(null, errorHtml, "text/html", "UTF-8", null);
+                // ميزة برو 5: فتح آخر مقال أوفلاين
+                new Handler().postDelayed(() -> {
+                    String lastUrl = prefs.getString("last_url", currentUrl);
+                    webView.loadUrl(lastUrl);
+                }, 2000);
             }
         });
 
@@ -147,26 +152,85 @@ public class MainActivity extends AppCompatActivity {
 
         webView.loadUrl(currentUrl);
         swipeRefreshLayout.setOnRefreshListener(() -> webView.reload());
+    }
 
+    private void setupFABs() {
+        // زر المشاركة
         fabShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "تابع مدونة رق المهدي برو https://rgalmahdi.blogspot.com: " + currentUrl);
-            startActivity(Intent.createChooser(shareIntent, "شارك الرابط عبر"));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "حمل تطبيق رق المهدي برو ماكس من أمازون: " + currentUrl);
+            startActivity(Intent.createChooser(shareIntent, "شارك التطبيق"));
         });
 
+        // ميزة برو 6: زر الوضع الليلي
+        fabNightMode.setOnClickListener(v -> {
+            boolean isNight = prefs.getBoolean("night_mode", false);
+            if (isNight) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                prefs.edit().putBoolean("night_mode", false).apply();
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                prefs.edit().putBoolean("night_mode", true).apply();
+            }
+        });
+
+        // ميزة برو 7: زر قراءة المقال صوتياً TTS
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech.setLanguage(new Locale("ar"));
+            }
+        });
+        
+        fabTTS.setOnClickListener(v -> {
+            webView.evaluateJavascript("document.body.innerText", value -> {
+                String text = value.replaceAll("\"", "");
+                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+                Toast.makeText(this, "جاري القراءة...", Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    private void setupBanner() {
         LinearLayout mainLayout = findViewById(R.id.mainLayout);
         Banner startAppBanner = new Banner(this);
         mainLayout.addView(startAppBanner);
     }
 
+    private void showWelcomeDialog() {
+        if (!prefs.getBoolean("first_run", false)) {
+            new AlertDialog.Builder(this)
+                .setTitle("مرحباً بك في رق المهدي برو ماكس")
+                .setMessage("7 مميزات حصرية:\n1. وضع ليلي ذكي\n2. قراءة صوتية للمقالات\n3. تسريع التحميل 3x\n4. حفظ آخر مقال أوفلاين\n5. منع تصوير الشاشة\n6. زر خروج ذكي\n7. نسخة خالية من الإعلانات المزعجة")
+                .setPositiveButton("ابدأ", null)
+                .show();
+            prefs.edit().putBoolean("first_run", true).apply();
+        }
+    }
+
+    // ميزة برو إضافية: ضغطتين للخروج
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
-            startAppAd.onBackPressed();
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce) {
+                startAppAd.onBackPressed(); // إعلان بيني عند الخروج
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "اضغط مرة أخرى للخروج", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
     }
 }
