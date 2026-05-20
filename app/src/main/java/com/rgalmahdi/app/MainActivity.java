@@ -20,10 +20,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-// إضافة إعلانات Start.io
 import com.startapp.sdk.adsbase.StartAppSDK;
 import com.startapp.sdk.ads.banner.Banner;
 import com.startapp.sdk.adsbase.StartAppAd;
+import com.startapp.sdk.ads.splash.SplashConfig;
+import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
+import com.startapp.sdk.adsbase.Ad;
 import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,21 +34,36 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
     private FloatingActionButton fabShare;
-    // الميزة 1: الرابط الصحيح لمدونتك
     private String currentUrl = "https://rgalmahdi.blogspot.com";
-    // إعلان Start.io
     private StartAppAd startAppAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // الميزة 8: منع تصوير الشاشة - شيل // لو تبي تفعله
-        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-
-        // تفعيل إعلانات Start.io حق رق المهدي
+        
+        // تفعيل Splash Ad قبل setContentView
         StartAppSDK.init(this, "204445944", false);
+        SplashConfig.getSplashConfig()
+            .setAppName("رق المهدي برو")
+            .setLogo(R.drawable.ic_launcher) // ← المسار الصحيح من مجلد drawable
+            .setTheme(SplashConfig.Theme.USER_DEFINED)
+            .setBgColor(android.graphics.Color.BLACK);
+        
+        StartAppAd.showSplash(this, savedInstanceState, new AdDisplayListener() {
+            @Override
+            public void adHidden(Ad ad) {
+                loadMainContent();
+            }
+            @Override public void adDisplayed(Ad ad) {}
+            @Override public void adClicked(Ad ad) {}
+            @Override public void adNotDisplayed(Ad ad) {
+                loadMainContent();
+            }
+        });
+    }
+
+    private void loadMainContent() {
+        setContentView(R.layout.activity_main);
         startAppAd = new StartAppAd(this);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
@@ -54,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         fabShare = findViewById(R.id.fabShare);
 
-        // إعدادات الويب فيو
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -62,13 +78,9 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
-        // الميزة 6: الكاش السريع + يعمل بدون نت
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        
-        // التعديل السحري لبلوجر: يخلي بلوجر يفكر أنك متصفح كروم
         webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
-        // الميزة 2: شريط التحميل الذهبي
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -85,10 +97,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 swipeRefreshLayout.setRefreshing(false);
-                currentUrl = url; // نحفظ الرابط للمشاركة
+                currentUrl = url;
             }
 
-            // الميزة 4: صفحة الأوفلاين الفخمة
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 String errorHtml = "<html><body style='background-color:#000; color:#FFD700; text-align:center; padding-top:100px; font-family:sans-serif;'>" +
@@ -101,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // الميزة 5: تحميل الملفات من موقعك
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -121,13 +131,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // نحمل مدونتك
         webView.loadUrl(currentUrl);
-        
-        // الميزة 3: السحب للتحديث
         swipeRefreshLayout.setOnRefreshListener(() -> webView.reload());
 
-        // الميزة 7: زر المشاركة العائم الذهبي
         fabShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
@@ -135,19 +141,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "شارك الرابط عبر"));
         });
 
-        // إعلان بانر Start.io فوق زر المشاركة
-        LinearLayout mainLayout = findViewById(R.id.mainLayout); // لازم تضيف هذا الأيدي في activity_main.xml
+        LinearLayout mainLayout = findViewById(R.id.mainLayout);
         Banner startAppBanner = new Banner(this);
         mainLayout.addView(startAppBanner);
     }
 
-    // زر الرجوع الذكي + إعلان بيني
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
-            // يطلع إعلان بيني قبل الخروج
             startAppAd.onBackPressed();
             super.onBackPressed();
         }
