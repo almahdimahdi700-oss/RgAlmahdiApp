@@ -26,19 +26,23 @@ android {
     }
 }
 
+// هذا السطر المهم اللي يحل المشكلة
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://artifactory.startapp.com/artifactory/android' }
+}
+
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     
-    // إعلانات Start.io حق رق المهدي
-    implementation 'com.startapp.inapp.sdk:startapp-sdk:5.2.0'
+    // إعلانات Start.io - الإصدار الصح
+    implementation 'com.startapp:inapp-sdk:5.2.0'
     
     // التحديث التلقائي
     implementation 'com.github.javiersantos:AppUpdater:2.7'
-}
-
-repositories {
-    maven { url 'https://jitpack.io' }
 }
