@@ -23,8 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.startapp.sdk.adsbase.StartAppSDK;
 import com.startapp.sdk.ads.banner.Banner;
 import com.startapp.sdk.adsbase.StartAppAd;
-import com.startapp.sdk.ads.splash.SplashConfig;
-import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
+import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
 import com.startapp.sdk.adsbase.Ad;
 import android.widget.LinearLayout;
 
@@ -41,22 +40,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // تفعيل Splash Ad قبل setContentView
+        // الطريقة الصحيحة لـ Splash في StartApp 5.2.0
         StartAppSDK.init(this, "204445944", false);
-        SplashConfig.getSplashConfig()
-            .setAppName("رق المهدي برو")
-            .setLogo(R.drawable.ic_launcher) // ← المسار الصحيح من مجلد drawable
-            .setTheme(SplashConfig.Theme.USER_DEFINED)
-            .setBgColor(android.graphics.Color.BLACK);
         
-        StartAppAd.showSplash(this, savedInstanceState, new AdDisplayListener() {
+        StartAppAd.showSplash(this, savedInstanceState, new AdEventListener() {
             @Override
-            public void adHidden(Ad ad) {
+            public void onReceiveAd(Ad ad) {
+                // تم تحميل إعلان البداية
+            }
+            
+            @Override
+            public void onFailedToReceiveAd(Ad ad) {
+                // لو فشل تحميل الإعلان، ادخل التطبيق مباشرة
                 loadMainContent();
             }
-            @Override public void adDisplayed(Ad ad) {}
-            @Override public void adClicked(Ad ad) {}
-            @Override public void adNotDisplayed(Ad ad) {
+            
+            @Override
+            public void onAdDisplayed(Ad ad) {
+                // الإعلان ظهر
+            }
+            
+            @Override
+            public void onAdClicked(Ad ad) {
+                // المستخدم ضغط الإعلان
+            }
+            
+            @Override
+            public void onAdClosed(Ad ad) {
+                // بعد ما يتسكر إعلان البداية، ادخل التطبيق
                 loadMainContent();
             }
         });
@@ -64,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadMainContent() {
         setContentView(R.layout.activity_main);
+
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
         startAppAd = new StartAppAd(this);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
