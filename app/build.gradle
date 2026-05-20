@@ -26,7 +26,7 @@ android {
     }
 }
 
-// هذا السطر المهم اللي يحل المشكلة
+// هذا السطر المهم اللي يحل مشكلة الإعلانات
 repositories {
     google()
     mavenCentral()
@@ -40,7 +40,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     
-    // إعلانات Start.io - الإصدار الصح
+    // إعلانات Start.io
     implementation 'com.startapp:inapp-sdk:5.2.0'
     
     // التحديث التلقائي
