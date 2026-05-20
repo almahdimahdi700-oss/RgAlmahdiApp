@@ -20,6 +20,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+// إضافة إعلانات Start.io
+import com.startapp.sdk.adsbase.StartAppSDK;
+import com.startapp.sdk.ads.banner.Banner;
+import com.startapp.sdk.adsbase.StartAppAd;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabShare;
     // الميزة 1: الرابط الصحيح لمدونتك
     private String currentUrl = "https://rgalmahdi.blogspot.com";
+    // إعلان Start.io
+    private StartAppAd startAppAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
         // الميزة 8: منع تصوير الشاشة - شيل // لو تبي تفعله
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
+        // تفعيل إعلانات Start.io حق رق المهدي
+        StartAppSDK.init(this, "204445944", false);
+        startAppAd = new StartAppAd(this);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         webView = findViewById(R.id.webView);
@@ -123,14 +134,21 @@ public class MainActivity extends AppCompatActivity {
             shareIntent.putExtra(Intent.EXTRA_TEXT, "تابع مدونة رق المهدي برو https://rgalmahdi.blogspot.com: " + currentUrl);
             startActivity(Intent.createChooser(shareIntent, "شارك الرابط عبر"));
         });
+
+        // إعلان بانر Start.io فوق زر المشاركة
+        LinearLayout mainLayout = findViewById(R.id.mainLayout); // لازم تضيف هذا الأيدي في activity_main.xml
+        Banner startAppBanner = new Banner(this);
+        mainLayout.addView(startAppBanner);
     }
 
-    // زر الرجوع الذكي
+    // زر الرجوع الذكي + إعلان بيني
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
+            // يطلع إعلان بيني قبل الخروج
+            startAppAd.onBackPressed();
             super.onBackPressed();
         }
     }
