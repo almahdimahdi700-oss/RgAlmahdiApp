@@ -13,7 +13,6 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_launcher"
         android:label="رق المهدي برو ماكس"
-        android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Material3.DayNight"
         tools:targetApi="31">
