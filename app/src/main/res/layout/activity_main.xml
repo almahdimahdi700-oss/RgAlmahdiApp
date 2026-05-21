@@ -25,17 +25,18 @@
             android:layout_height="match_parent" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- زر المشاركة -->
+    <!-- زر المشاركة الذهبي -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:contentDescription="مشاركة"
         android:src="@android:drawable/ic_menu_share"
         app:backgroundTint="#FFD700" />
 
-    <!-- زر الوضع الليلي -->
+    <!-- ميزة برو 6: زر الوضع الليلي -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNightMode"
         android:layout_width="wrap_content"
@@ -43,10 +44,11 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="80dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="وضع ليلي"
         android:src="@android:drawable/ic_menu_view"
         app:backgroundTint="#333333" />
 
-    <!-- زر القراءة الصوتية -->
+    <!-- ميزة برو 7: زر القراءة الصوتية -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabTTS"
         android:layout_width="wrap_content"
@@ -54,6 +56,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="144dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="قراءة صوتية"
         android:src="@android:drawable/ic_btn_speak_now"
         app:backgroundTint="#0066CC" />
 
