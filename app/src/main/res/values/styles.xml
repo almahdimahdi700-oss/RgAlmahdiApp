@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.RgAlmahdiApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@android:color/holo_blue_dark</item>
-        <item name="colorPrimaryVariant">@android:color/holo_blue_light</item>
+    <!-- هذا الثيم اللي يخلي التطبيق يشتغل بدون كراش -->
+    <style name="Theme.Material3.DayNight" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- اللون الأساسي للتطبيق -->
+        <item name="colorPrimary">#FFD700</item>
+        <item name="colorPrimaryVariant">#FFC400</item>
+        <item name="colorOnPrimary">#000000</item>
+        
+        <!-- يخفي شريط العنوان العلوي -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        
+        <!-- لون شريط الحالة -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
+        <item name="android:navigationBarColor">@color/black</item>
     </style>
 </resources>
