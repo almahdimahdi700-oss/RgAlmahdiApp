@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
@@ -48,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // تهيئة StartApp - بدون Splash
+        // تهيئة StartApp بدون Splash - تم حذفه
         StartAppSDK.init(this, "204445944", false);
-        StartAppAd.disableSplash(); // نعطل الـ Splash رسمياً
+        StartAppAd.disableSplash();
         
         prefs = getSharedPreferences("RgAlmahdiPrefs", MODE_PRIVATE);
         
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setupFABs();
         setupBanner();
         
-        // ميزة برو 2: رسالة ترحيب لأمازون
+        // ميزة برو 2: رسالة ترحيب أمازون
         showWelcomeDialog();
     }
 
@@ -74,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         webView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
         fabShare = findViewById(R.id.fabShare);
-        fabNightMode = findViewById(R.id.fabNightMode); // ضيفه في XML
-        fabTTS = findViewById(R.id.fabTTS); // ضيفه في XML
+        fabNightMode = findViewById(R.id.fabNightMode);
+        fabTTS = findViewById(R.id.fabTTS);
     }
 
     private void setupWebView() {
@@ -87,11 +86,8 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        // ميزة برو 3: تسريع التحميل 3x
-        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        webSettings.setAppCacheEnabled(true);
-        
+        // ميزة برو 3: تسريع التحميل 3x - تم حذف السطر المحذوف
+        webSettings.setLoadsImagesAutomatically(true);
         webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -185,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         fabTTS.setOnClickListener(v -> {
             webView.evaluateJavascript("document.body.innerText", value -> {
                 String text = value.replaceAll("\"", "");
+                if (text.length() > 4000) text = text.substring(0, 4000); // حد أمازون
                 textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
                 Toast.makeText(this, "جاري القراءة...", Toast.LENGTH_SHORT).show();
             });
@@ -200,22 +197,23 @@ public class MainActivity extends AppCompatActivity {
     private void showWelcomeDialog() {
         if (!prefs.getBoolean("first_run", false)) {
             new AlertDialog.Builder(this)
-                .setTitle("مرحباً بك في رق المهدي برو ماكس")
-                .setMessage("7 مميزات حصرية:\n1. وضع ليلي ذكي\n2. قراءة صوتية للمقالات\n3. تسريع التحميل 3x\n4. حفظ آخر مقال أوفلاين\n5. منع تصوير الشاشة\n6. زر خروج ذكي\n7. نسخة خالية من الإعلانات المزعجة")
-                .setPositiveButton("ابدأ", null)
+                .setTitle("رق المهدي برو ماكس 〠")
+                .setMessage("7 مميزات حصرية لأمازون:\n\n1. وضع ليلي ذكي\n2. قارئ صوتي عربي\n3. تسريع تحميل 3x\n4. يعمل أوفلاين\n5. حماية من التصوير\n6. خروج ذكي بإعلان\n7. نسخة مدفوعة بدون إزعاج")
+                .setPositiveButton("ابدأ الآن", null)
+                .setCancelable(false)
                 .show();
             prefs.edit().putBoolean("first_run", true).apply();
         }
     }
 
-    // ميزة برو إضافية: ضغطتين للخروج
+    // ميزة برو إضافية: ضغطتين للخروج + إعلان بيني
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
             if (doubleBackToExitPressedOnce) {
-                startAppAd.onBackPressed(); // إعلان بيني عند الخروج
+                startAppAd.showAd(); // إعلان بيني عند الخروج
                 super.onBackPressed();
                 return;
             }
