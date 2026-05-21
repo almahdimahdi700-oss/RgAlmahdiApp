@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- الصلاحيات المطلوبة للإنترنت والإعلانات -->
+    <!-- صلاحيات الإعلانات والانترنت والتحميل -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_launcher"
-        android:label="رق المهدي برو"
+        android:label="رق المهدي برو ماكس"
+        android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true">
-        
+        android:theme="@style/Theme.RgAlmahdiApp"
+        tools:targetApi="31">
+
+        <!-- هذا السطر المهم للإعلانات -->
+        <meta-data
+            android:name="com.startapp.sdk.APPLICATION_ID"
+            android:value="204445944" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTop">
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- ميتا داتا إعلانات Start.io حق رق المهدي -->
-        <meta-data
-            android:name="com.startapp.sdk.APPLICATION_ID"
-            android:value="204445944" />
-
     </application>
-
 </manifest>
